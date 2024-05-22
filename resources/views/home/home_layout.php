@@ -18,6 +18,9 @@ if (isset($_SESSION['user'])) {
     height: 15rem; 
     width: 100%;
 }
+.leaflet-control-geocoder-form{
+    background-color: orange;
+}
 <?php $style = ob_get_clean();?>
 
 

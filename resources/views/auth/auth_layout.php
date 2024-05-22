@@ -15,7 +15,7 @@
     width: 100%;
 }
 .leaflet-control-geocoder-form{
-    background-color: black
+    background-color: orange;
 }
 <?php $style = ob_get_clean();?>
 

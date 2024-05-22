@@ -128,8 +128,7 @@
                                             onclick="handleClearButtonClick(event)"><i class="bi-x"></i></button>
                                     </div>
                                 </div>
-                                <button type="button" id="add-button" class="add-button btn btn-primary"><i
-                                        class="bi-plus"></i> Tambah</button>
+                                <button type="button" id="add-button" class="add-button btn btn-primary"><i class="bi-plus"></i> Tambah</button>
                             </div>
                         </div>
                     </form>
