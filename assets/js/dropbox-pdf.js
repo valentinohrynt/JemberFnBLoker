@@ -66,7 +66,7 @@ function handleFiles(files) {
 }
 
 function handleClearButtonClick(event) {
-    if  (event) {
+    if (event) {
         event.stopPropagation();
     }
     let fileListContainer = document.getElementById("file-list");
@@ -77,7 +77,12 @@ function handleClearButtonClick(event) {
     dropbox.querySelector(".cloud-icon").classList.remove("d-none");
     document.getElementById("clear-button").classList.add("d-none");
     document.getElementById("file").value = "";
-    document.getElementById("file-error").classList.add("d-none")
+
+    // Reset status validasi
+    let form = $('#lamaranKerjaForm');
+    form.validate().element('#file'); // Validasi ulang
+    form.find('.is-invalid').removeClass('is-invalid');
+    form.find('.is-valid').removeClass('is-valid');
 }
 
 document.getElementById("file").addEventListener("change", handleFileSelect);
