@@ -251,7 +251,7 @@ if (isset($url)) {
                 let filteredLoker = Loker;
         
                 if (searchTerm !== '') {
-                    filteredLoker = filteredLoker.filter(loker => loker.title.toLowerCase().includes(searchTerm));
+                    filteredLoker = filteredLoker.filter(loker => loker.title.toLowerCase().includes(searchTerm) || loker.jc_name.toLowerCase().includes(searchTerm));
                 }
         
                 if (categoryFilter !== '') {

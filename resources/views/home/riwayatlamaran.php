@@ -11,7 +11,7 @@
             <div class="row content mb-3">
                 <div class="col-md-6 mb-3">
                     <div class="d-flex flex-column">
-                        <label for="searchInput" class="form-label">Cari berdasarkan judul:</label>
+                        <label for="searchInput" class="form-label">Cari berdasarkan judul atau perusahaan:</label>
                         <div class="d-flex">
                             <input type="text" id="searchInput" class="form-control"></input>
                             <button type="button" class="searchBtn border-0 bg-transparent"><i class="bi-search"></i></button>
