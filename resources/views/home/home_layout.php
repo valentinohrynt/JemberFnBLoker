@@ -18,6 +18,9 @@ if (isset($_SESSION['user'])) {
     height: 15rem; 
     width: 100%;
 }
+.leaflet-control-geocoder-form{
+    background-color: orange;
+}
 <?php $style = ob_get_clean();?>
 
 
@@ -129,7 +132,7 @@ if (isset($url)) {
                     required: true,
                     maxfilecount: 3,
                     minfilecount: 3,
-                    acceptpdf: true // Using the custom rule for accepting only PDF files
+                    acceptpdf: true
                 }
             },
             messages: {

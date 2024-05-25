@@ -440,36 +440,6 @@ if (isset($url)) {
 
 <?php ob_start(); ?>
 <script>
-    $('.add-button').off('click').on('click', function() {
-        showOverlay();
-        if ($('#buatlokerForm').valid()) {
-            var formData = new FormData($('#buatlokerForm')[0]);
-            $.ajax({
-                url: '<?= urlpath('dashboard/buatinformasiloker') ?>',
-                method: 'post',
-                data: formData,
-                dataType: 'json',
-                async: true,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        hideOverlay();
-                        handleClearButtonClick();
-                        resetForm();
-                        alert('Loker baru berhasil ditambahkan!');
-                    } else {
-                        hideOverlay();
-                        alert('Terjadi kesalahan: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX request failed:', error);
-                    alert('Pastikan semua kolom sudah terisi!');
-                }
-            });
-        }
-    });
     $('.accept-button').off('click').on('click', function() {
         showOverlay();
         $.ajax({
@@ -513,7 +483,7 @@ if (isset($url)) {
                 console.error('AJAX request failed:', error);
             }
         })
-    })
+    });
     function resetForm() {
         var form = $('#buatlokerForm');
         form.validate().resetForm();
@@ -522,7 +492,49 @@ if (isset($url)) {
         form[0].reset();
     }
 </script>
-<?php $ajaxpostscript = ob_get_clean(); ?>
+<?php $ajaxpostscript1 = ob_get_clean(); ?>
+
+<?php ob_start(); ?>
+<script>
+        $('.add-button').off('click').on('click', function() {
+        if ($('#buatlokerForm').valid()) {
+            showOverlay();
+            var formData = new FormData($('#buatlokerForm')[0]);
+            $.ajax({
+                url: '<?= urlpath('dashboard/buatinformasiloker') ?>',
+                method: 'post',
+                data: formData,
+                dataType: 'json',
+                async: true,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        hideOverlay();
+                        handleClearButtonClick();
+                        resetForm();
+                        alert('Loker baru berhasil ditambahkan!');
+                    } else {
+                        hideOverlay();
+                        alert('Terjadi kesalahan: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX request failed:', error);
+                    alert('Pastikan semua kolom sudah terisi!');
+                }
+            });
+        }
+    });
+    function resetForm() {
+        var form = $('#buatlokerForm');
+        form.validate().resetForm();
+        form.find('.is-invalid').removeClass('is-invalid');
+        form.find('.is-valid').removeClass('is-valid');
+        form[0].reset();
+    }
+</script>
+<?php $ajaxpostscript2 = ob_get_clean(); ?>
 
 <?php ob_start(); ?>
 <script>
@@ -550,6 +562,8 @@ if (isset($url)) {
     });
 </script>
 <?php $chartscript = ob_get_clean(); ?>
+
+
 
 
 <?php include 'resources/views/master-layout/master.php'; ?>
