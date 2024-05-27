@@ -85,6 +85,20 @@ class DashboardController
             }
         }
     }
+
+    static function getTotalVisitorsperDay() {
+        try {
+            $total_visitors_data = VisitorLogs::getTotalVisitorsperDay();
+            header( 'Content-Type: application/json' );
+            echo json_encode( $total_visitors_data );
+            exit;
+        } catch ( Exception $e ) {
+            header( 'Content-Type: application/json' );
+            echo json_encode( array( 'success' => false, 'error' => $e->getMessage() ) );
+            exit;
+        }
+    }
+
     static function buatloker()
  {
         if ( !isset( $_COOKIE[ 'token' ] ) || !isset( $_SESSION[ 'user' ] ) ) {

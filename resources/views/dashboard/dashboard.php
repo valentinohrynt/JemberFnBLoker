@@ -128,6 +128,13 @@
                         }
                         ?>
                     </div>
+                    <div>
+                    <?php
+                        if ($user['role_id'] == 1) {
+                            echo '<canvas id="visitorsChart" width="400" height="400"></canvas>';
+                        }
+                    ?>
+                    </div>
                     <?php
                     if ($user['role_id'] == 1) {
                         echo '<h3 class="fw-bold fs-4 my-3">Loker baru hari ini</h3>';

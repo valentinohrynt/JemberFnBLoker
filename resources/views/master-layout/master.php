@@ -44,6 +44,7 @@
     <?= $ajaxpostscript2 ?? ''; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <?= $chartscript ?? ''; ?>
+    <?= $chartscript2 ?? ''; ?>
     <script>
         function showOverlay() {
             $('#overlay').fadeIn();

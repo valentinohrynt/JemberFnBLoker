@@ -563,6 +563,71 @@ if (isset($url)) {
 </script>
 <?php $chartscript = ob_get_clean(); ?>
 
+<?php ob_start(); ?>
+<script>
+    $(document).ready(function() {
+        var chart; // Variabel untuk menyimpan instance grafik
+        
+        // Mendefinisikan fungsi untuk mengambil data dan merender grafik
+        function fetchDataAndRenderChart() {
+            $.ajax({
+                url: '<?= urlpath('dashboard/getvisitorsdata') ?>',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    renderChart(data);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Fungsi untuk merender atau memperbarui grafik
+        function renderChart(data) {
+            if (!chart) {
+                // Jika grafik tidak ada, buat yang baru
+                var ctx = document.getElementById('visitorsChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Pengunjung',
+                            data: [],
+                            borderColor: 'blue',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                    }
+                });
+            }
+
+            // Perbarui data grafik dengan data baru
+            var dates = [];
+            var visitors = [];
+            data.forEach(function(item) {
+                dates.push(item.date);
+                visitors.push(item.total_visitors);
+            });
+
+            chart.data.labels = dates;
+            chart.data.datasets[0].data = visitors;
+            chart.update(); // Perbarui grafik
+        }
+
+        // Panggil fungsi pada awalnya
+        fetchDataAndRenderChart();
+
+        // Set interval untuk memanggil fungsi setiap 10 detik
+        setInterval(fetchDataAndRenderChart, 10000);
+    });
+</script>
+<?php $chartscript2 = ob_get_clean(); ?>
 
 
 

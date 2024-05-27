@@ -20,6 +20,7 @@ Router::url('home/riwayatlamaran/detailriwayatlamaran', 'get', 'HomeController::
 
 // dashboard
 Router::url('dashboard', 'get', 'DashboardController::index');
+Router::url('dashboard/getvisitorsdata', 'get', 'DashboardController::getTotalVisitorsperDay');
 Router::url('dashboard/buatinformasiloker', 'get', 'DashboardController::buatloker');
 Router::url('dashboard/buatinformasiloker', 'post', 'DashboardController::createJobVacancy');
 Router::url('dashboard/daftarloker', 'get', 'DashboardController::daftarLoker');
