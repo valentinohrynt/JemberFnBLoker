@@ -1,9 +1,9 @@
 <?php $title = 'JemberFnBLoker - Auth'; ?>
 
 <?php ob_start(); ?>
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <?php $apiscriptlink = ob_get_clean(); ?>
 
@@ -44,34 +44,68 @@ if (isset($url)) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     }).addTo(map);
-    var geocoder = L.Control.geocoder().addTo(map);
+    var geocoder = L.Control.Geocoder.nominatim();
+    var searchInput = document.getElementById('street');
+    var delayTimer;
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(delayTimer);
+        var searchValue = e.target.value.trim();
+
+        if (searchValue.length >= 3) {
+            delayTimer = setTimeout(function() {
+            geocodeAddress(searchValue, geocoder);
+            }, 500);
+        } else {
+            if (marker) {
+            map.removeLayer(marker);
+            marker = null;
+            }
+        }
+    });
+    function geocodeAddress(address, geocoder) {
+        geocoder.geocode(address, function(results) {
+            if (results.length > 0) {
+            var latlng = results[0].center;
+            if (!jemberBounds.contains(latlng)) {
+                alert("Anda tidak bisa memilih lokasi di luar Jember! (Masukkan alamat se-detail mungkin!)");
+                return;
+            }
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            marker = L.marker(latlng).addTo(map);
+            map.setView(latlng, 13);
+            } else {
+            alert('Gagal mencari alamat, silahkan masukkan alamat lebih lengkap.');
+            }
+        });
+    }
     var marker;
 
     map.on('click', function(e) {
         var latlng = e.latlng;
         if (!jemberBounds.contains(latlng)) {
-            alert("You can't click outside of Jember!");
+            alert("Anda tidak bisa memilih lokasi di luar Jember!");
             return;
         }
         if (marker) {
             map.removeLayer(marker);
         }
         marker = L.marker(latlng).addTo(map);
-        console.log(latlng);
     });
 
     geocoder.on('markgeocode', function(e) {
         var latlng = e.geocode.center;
         if (!jemberBounds.contains(latlng)) {
-            alert("You can't search outside of Jember!");
+            alert("Anda tidak bisa memilih lokasi di luar Jember!");
             return;
         }
         if (marker) {
             map.removeLayer(marker);
         }
         marker = L.marker(latlng).addTo(map);
-        console.log(latlng);
     });
+
     function sendDataToBackend() {
         showOverlay();
         var form = document.getElementById('registerForm');

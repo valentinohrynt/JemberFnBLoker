@@ -138,7 +138,6 @@ if (isset($url)) {
             map.removeLayer(marker);
         }
         marker = L.marker(latlng).addTo(map);
-        console.log(latlng);
     });
 
     geocoder.on('markgeocode', function(e) {
@@ -151,7 +150,6 @@ if (isset($url)) {
             map.removeLayer(marker);
         }
         marker = L.marker(latlng).addTo(map);
-        console.log(latlng);
     });
 </script>
 <?php $mapscript = ob_get_clean(); ?>
