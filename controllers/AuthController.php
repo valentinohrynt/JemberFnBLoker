@@ -30,53 +30,76 @@ class AuthController
         view( 'auth/auth_layout', [ 'url' => 'register', 'role_id' => $role_id, 'districts' => $districts ] );
     }
 
-    static function sessionLogin()
- {
+    static function sessionLogin(){
         $post = array_map( 'htmlspecialchars', $_POST );
-
-        $user = Users::login( [
-            'username' => $post[ 'username' ],
-            'password' => $post[ 'password' ]
-        ] );
-
-        if ( $user ) {
-            if ( $user[ 'status' ] === 'active' ){
-                if ( $user[ 'role_id' ] == '1' ) {
-                    $_SESSION[ 'user' ] = $user;
-                    setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                    setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                    header( 'Location: dashboard' );
-                    exit();
-                } elseif ( $user[ 'role_id' ] == '2' ) {
-                    $_SESSION[ 'user' ] = $user;
-                    setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                    setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                    header( 'Location: home' );
-                    exit();
-                } elseif ( $user[ 'role_id' ] == '3' ) {
-                    $_SESSION[ 'user' ] = $user;
-                    setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                    setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                    header( 'Location: dashboard' );
+        if (empty(trim($post['username'])) || empty(trim($post['password']))) {
+            setFlashMessage('danger', 'Harap isi username dan password!');
+            header('Location: login?failed=true');
+            exit();
+        } else {
+            $user = Users::login( [
+                'username' => $post[ 'username' ],
+                'password' => $post[ 'password' ]
+            ] );
+    
+            if ( $user ) {
+                if ( $user[ 'status' ] === 'active' ) {
+                    if ( $user[ 'role_id' ] == '1' ) {
+                        $_SESSION[ 'user' ] = $user;
+                        setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
+                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
+                        header( 'Location: dashboard' );
+                        exit();
+                    } elseif ( $user[ 'role_id' ] == '2' ) {
+                        $_SESSION[ 'user' ] = $user;
+                        setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
+                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
+                        header( 'Location: home' );
+                        exit();
+                    } elseif ( $user[ 'role_id' ] == '3' ) {
+                        $_SESSION[ 'user' ] = $user;
+                        setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
+                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
+                        header( 'Location: dashboard' );
+                        exit();
+                    }
+                } else {
+                    setFlashMessage( 'danger', 'Akun anda sedang dinonaktifkan, silahkan hubungi admin!' );
+                    header( 'Location: login?failed=true' );
                     exit();
                 }
             } else {
-                setFlashMessage( 'danger', 'Akun anda sedang dinonaktifkan, silahkan hubungi admin!' );
+                setFlashMessage( 'danger', 'Username atau Password salah, silahkan coba lagi!' );
                 header( 'Location: login?failed=true' );
-                exit();
             }
-        } else {
-            setFlashMessage( 'danger', 'Username atau Password salah, silahkan coba lagi!' );
-            header( 'Location: login?failed=true' );
         }
     }
 
-    static function newRegister()
- {
+    static function newRegister(){
         $post = array_map( 'htmlspecialchars', $_POST );
-
+        $requiredFields = ['username', 'password', 'email', 'role_id', 'name', 'phone', 'street', 'district_id', 'lat', 'lng'];
+        foreach ($requiredFields as $field) {
+            if (empty(trim($post[$field]))) {
+                http_response_code(400);
+                echo json_encode(['message' => 'Harap isi semua kolom yang diperlukan!']);
+                exit();
+            }
+        }
+    
+        // Validasi email
+        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Email tidak valid!']);
+            exit();
+        }
+    
+        // Validasi nomor telepon
+        if (!preg_match('/^[0-9]{10,}$/', $post['phone'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Nomor telepon harus minimal 10 digit angka!']);
+            exit();
+        }
         try {
-            // Check if username or email already exists
             $existingUser = Users::findUserByUsernameOrEmail( $post[ 'username' ], $post[ 'email' ] );
 
             if ( $existingUser ) {
