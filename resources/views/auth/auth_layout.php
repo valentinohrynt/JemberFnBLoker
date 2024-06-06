@@ -107,30 +107,31 @@ if (isset($url)) {
     });
 
     function sendDataToBackend() {
-        showOverlay();
-        var form = document.getElementById('registerForm');
-        var formData = new FormData(form);
-        formData.append('lat', (marker.getLatLng().lat).toFixed(8));
-        formData.append('lng', (marker.getLatLng().lng).toFixed(8));
-
-        $.ajax({
-            type: 'POST',
-            url: '<?= urlpath('register') ?>',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                hideOverlay();
-                alert('Anda sudah berhasil mendaftar');
-                window.location.href = '<?= urlpath('login') ?>';
-            },
-            error: function(xhr, status, error) {
-                hideOverlay();
-                var response = JSON.parse(xhr.responseText);
-                alert(response.message);
-                console.error('Terjadi kesalahan, mohon coba lagi');
-            }
-        });
+        if ($('#registerForm').valid()) {
+            var form = document.getElementById('registerForm');
+            var formData = new FormData(form);
+            formData.append('lat', (marker.getLatLng().lat).toFixed(8));
+            formData.append('lng', (marker.getLatLng().lng).toFixed(8));
+            showOverlay();
+            $.ajax({
+                type: 'POST',
+                url: '<?= urlpath('register') ?>',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    hideOverlay();
+                    alert('Anda sudah berhasil mendaftar');
+                    window.location.href = '<?= urlpath('login') ?>';
+                },
+                error: function(xhr, status, error) {
+                    hideOverlay();
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.message);
+                    console.error('Terjadi kesalahan, mohon coba lagi');
+                }
+            });
+        }
     }
 </script>
 <?php $mapscript = ob_get_clean() ?>
@@ -208,9 +209,50 @@ if (isset($url)) {
                 form.submit();
             }
         });
+        $.validator.addMethod("equalTo", function(value, element, param) {
+            return value === $(param).val();
+        }, "Password dan Konfirmasi Password harus sama.");
+        $('#resetPasswordForm').validate({
+            rules: {
+                password: {
+                    required: true,
+                },
+                confirm_password: {
+                    required: true,
+                    equalTo: "#password"
+                }
+            },
+            messages: {
+                password: {
+                    required: "Bagian ini harus diisi",
+                },
+                confirm_password: {
+                    required: "Bagian ini harus diisi",
+                    equalTo: "Password dan Konfirmasi Password harus sama."
+                }
+            },
+            errorElement: "div",
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-outline').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid').addClass('is-valid');
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
     });
 </script>
 <?php $customscript = ob_get_clean() ?>
+
+<?php ob_start() ?>
+
+<?php $ajaxpostscript1 = ob_get_clean() ?>
 
 
 <?php include 'resources/views/master-layout/master.php'; ?>

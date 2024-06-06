@@ -260,54 +260,53 @@ if (isset($url)) {
             },
             unhighlight: function(element, errorClass, validClass) {
                 $(element).removeClass('is-invalid').addClass('is-valid');
-            },
-            submitHandler: function(form) {
-                event.preventDefault();
-                var formData = new FormData(form);
-                if ($('#imageInput')[0].files.length > 0) {
-                    formData.append('image', $('#imageInput')[0].files[0]);
-                }
-                formData.append('lat', (marker.getLatLng().lat).toFixed(8));
-                formData.append('lng', (marker.getLatLng().lng).toFixed(8));
-                sendFormData(formData);
             }
         });
-
-        function sendFormData(formData) {
-            if ($('#editProfileForm').valid()) {
-                showOverlay()
-                try {
-                    $.ajax({
-                        type: 'POST',
-                        url: '<?= urlpath('profile/ubahprofile') ?>',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            hideOverlay()
-                            var data = JSON.parse(response);
-                            if (data.status === 'success') {
-                                alert(data.message);
-                                window.location.href = '<?= urlpath('profile') ?>';
-                            } else if (data.status === 'error') {
-                                alert(data.message);
-                            } else if (data.status === 'view') {
-                                alert(data.message);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            hideOverlay()
-                            console.error("Error: " + error);
-                            console.error("Status: " + status);
-                            console.error("Response: " + xhr.responseText);
-                            alert('Terjadi kesalahan saat mengubah profil. Silakan coba lagi.');
+    });
+    $('#save-btn-js').off('click').on('click', function() {
+        console.log('saveChangesBtn clicked');
+        if ($('#editProfileForm').valid()) {
+            var form = $('#editProfileForm')[0]; // Mendapatkan elemen formulir
+            var formData = new FormData(form);
+    
+            // Menambahkan data tambahan ke formData jika diperlukan
+            if ($('#imageInput')[0].files.length > 0) {
+                formData.append('image', $('#imageInput')[0].files[0]);
+            }
+            formData.append('lat', (marker.getLatLng().lat).toFixed(8));
+            formData.append('lng', (marker.getLatLng().lng).toFixed(8));
+            showOverlay()
+            try {
+                $.ajax({
+                    type: 'POST',
+                    url: '<?= urlpath('profile/ubahprofile') ?>',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        hideOverlay()
+                        var data = JSON.parse(response);
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            window.location.href = '<?= urlpath('profile') ?>';
+                        } else if (data.status === 'error') {
+                            alert(data.message);
+                        } else if (data.status === 'view') {
+                            alert(data.message);
                         }
-                    });
-                } catch (e) {
-                    hideOverlay()
-                    console.error("Exception: " + e.message);
-                    alert('Terjadi kesalahan tak terduga. Silakan coba lagi.');
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        hideOverlay()
+                        console.error("Error: " + error);
+                        console.error("Status: " + status);
+                        console.error("Response: " + xhr.responseText);
+                        alert('Terjadi kesalahan saat mengubah profil. Silakan coba lagi.');
+                    }
+                });
+            } catch (e) {
+                hideOverlay()
+                console.error("Exception: " + e.message);
+                alert('Terjadi kesalahan tak terduga. Silakan coba lagi.');
             }
         }
     });
@@ -323,14 +322,6 @@ if (isset($url)) {
             rules: {
                 name: {
                     required: true
-                },
-                gender: {
-                    required: true
-                },
-                age: {
-                    required: true,
-                    digits: true,
-                    min: 1
                 },
                 phone: {
                     required: true,
@@ -357,14 +348,6 @@ if (isset($url)) {
             messages: {
                 name: {
                     required: "Silakan masukkan nama Anda"
-                },
-                gender: {
-                    required: "Silakan pilih jenis kelamin Anda"
-                },
-                age: {
-                    required: "Silakan masukkan usia Anda",
-                    digits: "Masukkan usia yang valid (hanya angka)",
-                    min: "Usia harus berupa angka positif"
                 },
                 phone: {
                     required: "Silakan masukkan nomor telepon Anda",
@@ -398,54 +381,53 @@ if (isset($url)) {
             },
             unhighlight: function(element, errorClass, validClass) {
                 $(element).removeClass('is-invalid').addClass('is-valid');
-            },
-            submitHandler: function(form) {
-                event.preventDefault();
-                var formData = new FormData(form);
-                if ($('#imageInput')[0].files.length > 0) {
-                    formData.append('image', $('#imageInput')[0].files[0]);
-                }
-                formData.append('lat', (marker.getLatLng().lat).toFixed(8));
-                formData.append('lng', (marker.getLatLng().lng).toFixed(8));
-                sendFormData(formData);
             }
         });
-
-        function sendFormData(formData) {
-            if ($('#editProfileForm').valid()) {
-                showOverlay()
-                try {
-                    $.ajax({
-                        type: 'POST',
-                        url: '<?= urlpath('profile/ubahprofile') ?>',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            hideOverlay()
-                            var data = JSON.parse(response);
-                            if (data.status === 'success') {
-                                alert(data.message);
-                                window.location.href = '<?= urlpath('profile') ?>';
-                            } else if (data.status === 'error') {
-                                alert(data.message);
-                            } else if (data.status === 'view') {
-                                alert(data.message);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            hideOverlay()
-                            console.error("Error: " + error);
-                            console.error("Status: " + status);
-                            console.error("Response: " + xhr.responseText);
-                            alert('Terjadi kesalahan saat mengubah profil. Silakan coba lagi.');
+    });
+    $('#save-btn-jc').off('click').on('click', function() {
+        console.log('saveChangesBtn clicked');
+        if ($('#editProfileForm').valid()) {
+            var form = $('#editProfileForm')[0]; // Mendapatkan elemen formulir
+            var formData = new FormData(form);
+    
+            // Menambahkan data tambahan ke formData jika diperlukan
+            if ($('#imageInput')[0].files.length > 0) {
+                formData.append('image', $('#imageInput')[0].files[0]);
+            }
+            formData.append('lat', (marker.getLatLng().lat).toFixed(8));
+            formData.append('lng', (marker.getLatLng().lng).toFixed(8));
+            showOverlay()
+            try {
+                $.ajax({
+                    type: 'POST',
+                    url: '<?= urlpath('profile/ubahprofile') ?>',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        hideOverlay()
+                        var data = JSON.parse(response);
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            window.location.href = '<?= urlpath('profile') ?>';
+                        } else if (data.status === 'error') {
+                            alert(data.message);
+                        } else if (data.status === 'view') {
+                            alert(data.message);
                         }
-                    });
-                } catch (e) {
-                    hideOverlay()
-                    console.error("Exception: " + e.message);
-                    alert('Terjadi kesalahan tak terduga. Silakan coba lagi.');
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        hideOverlay()
+                        console.error("Error: " + error);
+                        console.error("Status: " + status);
+                        console.error("Response: " + xhr.responseText);
+                        alert('Terjadi kesalahan saat mengubah profil. Silakan coba lagi.');
+                    }
+                });
+            } catch (e) {
+                hideOverlay()
+                console.error("Exception: " + e.message);
+                alert('Terjadi kesalahan tak terduga. Silakan coba lagi.');
             }
         }
     });

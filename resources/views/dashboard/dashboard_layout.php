@@ -157,8 +157,7 @@ if (isset($url)) {
             },
             unhighlight: function(element, errorClass, validClass) {
                 $(element).removeClass('is-invalid').addClass('is-valid');
-            },
-            
+            }
         });
     });
 </script>
@@ -347,8 +346,8 @@ if (isset($url)) {
                             var editCell = $('<td>').append(editButton);
                             newRow.append(editCell);
                             $('#editModal .save-button').off('click').on('click', function() {
-                                showOverlay();
                                 if ($('#editlokerForm').valid()) {
+                                    showOverlay();
                                     var formData = new FormData();
                                     formData.append('d', $('#d').val());
                                     formData.append('e', $('#e').val());

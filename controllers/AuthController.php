@@ -30,37 +30,37 @@ class AuthController
         view( 'auth/auth_layout', [ 'url' => 'register', 'role_id' => $role_id, 'districts' => $districts ] );
     }
 
-    static function sessionLogin(){
-        $post = array_map( 'htmlspecialchars', $_POST );
-        if (empty(trim($post['username'])) || empty(trim($post['password']))) {
-            setFlashMessage('danger', 'Harap isi username dan password!');
-            header('Location: login?failed=true');
+    static function sessionLogin() {
+        $post = array_map( 'trim', $_POST );
+        if ( empty( $post[ 'username' ] ) || empty( $post[ 'password' ] ) ) {
+            setFlashMessage( 'danger', 'Harap isi username dan password!' );
+            header( 'Location: login?failed=true' );
+            exit();
+        } elseif ( strlen( $post[ 'password' ] ) < 8 ) {
+            setFlashMessage( 'danger', 'Password harus terdiri dari minimal 8 karakter!' );
+            header( 'Location: login?failed=true' );
             exit();
         } else {
             $user = Users::login( [
                 'username' => $post[ 'username' ],
                 'password' => $post[ 'password' ]
             ] );
-    
+
             if ( $user ) {
                 if ( $user[ 'status' ] === 'active' ) {
-                    if ( $user[ 'role_id' ] == '1' ) {
+                    if ( $user[ 'role_id' ] == '1' || $user[ 'role_id' ] == '2' || $user[ 'role_id' ] == '3' ) {
                         $_SESSION[ 'user' ] = $user;
                         setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
                         setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                        header( 'Location: dashboard' );
+                        if ( $user[ 'role_id' ] == '1' || $user[ 'role_id' ] == '3' ) {
+                            header( 'Location: dashboard' );
+                        } elseif ( $user[ 'role_id' ] == '2' ) {
+                            header( 'Location: home' );
+                        }
                         exit();
-                    } elseif ( $user[ 'role_id' ] == '2' ) {
-                        $_SESSION[ 'user' ] = $user;
-                        setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                        header( 'Location: home' );
-                        exit();
-                    } elseif ( $user[ 'role_id' ] == '3' ) {
-                        $_SESSION[ 'user' ] = $user;
-                        setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
-                        header( 'Location: dashboard' );
+                    } else {
+                        setFlashMessage( 'danger', 'Peran pengguna tidak valid!' );
+                        header( 'Location: login?failed=true' );
                         exit();
                     }
                 } else {
@@ -71,34 +71,36 @@ class AuthController
             } else {
                 setFlashMessage( 'danger', 'Username atau Password salah, silahkan coba lagi!' );
                 header( 'Location: login?failed=true' );
+                exit();
             }
         }
     }
 
-    static function newRegister(){
-        $post = array_map( 'htmlspecialchars', $_POST );
-        $requiredFields = ['username', 'password', 'email', 'role_id', 'name', 'phone', 'street', 'district_id', 'lat', 'lng'];
-        foreach ($requiredFields as $field) {
-            if (empty(trim($post[$field]))) {
-                http_response_code(400);
-                echo json_encode(['message' => 'Harap isi semua kolom yang diperlukan!']);
-                exit();
-            }
-        }
-    
-        // Validasi email
-        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
-            http_response_code(400);
-            echo json_encode(['message' => 'Email tidak valid!']);
+    static function newRegister() {
+        $post = array_map( 'trim', $_POST );
+        $phoneRegex = '/^(?:\+?62|0)\d{9,12}$/';
+        if ( empty( $post[ 'username' ] ) || empty( $post[ 'password' ] ) || empty( $post[ 'email' ] ) || empty( $post[ 'name' ] ) || empty( $post[ 'phone' ] ) || empty( $post[ 'lat' ] ) || empty( $post[ 'lng' ] ) || empty( $post[ 'street' ] ) || empty( $post[ 'district_id' ] ) || empty( $post[ 'role_id' ] ) ) {
+            http_response_code( 400 );
+            echo json_encode( [ 'message' => 'Semua bidang harus diisi' ] );
+            exit();
+        } elseif ( !filter_var( $post[ 'email' ], FILTER_VALIDATE_EMAIL ) ) {
+            http_response_code( 400 );
+            echo json_encode( [ 'message' => 'Format email tidak valid' ] );
+            exit();
+        } elseif ( strlen( $post[ 'password' ] ) < 8 ) {
+            http_response_code( 400 );
+            echo json_encode( [ 'message' => 'Password harus terdiri dari minimal 8 karakter' ] );
+            exit();
+        } elseif ( strlen( $post[ 'phone' ] ) < 10 ) {
+            http_response_code( 400 );
+            echo json_encode( [ 'message' => 'Nomor telepon harus terdiri dari minimal 10 karakter' ] );
+            exit();
+        } elseif ( !preg_match( $phoneRegex, $post[ 'phone' ] ) ) {
+            http_response_code( 400 );
+            echo json_encode( [ 'message' => 'Format nomor telepon Indonesia tidak valid' ] );
             exit();
         }
-    
-        // Validasi nomor telepon
-        if (!preg_match('/^[0-9]{10,}$/', $post['phone'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'Nomor telepon harus minimal 10 digit angka!']);
-            exit();
-        }
+
         try {
             $existingUser = Users::findUserByUsernameOrEmail( $post[ 'username' ], $post[ 'email' ] );
 
@@ -178,5 +180,84 @@ class AuthController
 
         header( 'Location: home' );
         exit();
+    }
+    static function forgotPassword() {
+        view( 'auth/auth_layout', [ 'url' => 'forgot_password' ] );
+    }
+    static function resetPassword() {
+        $encrypted_code = $_GET[ 'verification' ];
+        $email = $_GET[ 'email' ];
+        $check_code = Users::checkVerificationCode( $email, $encrypted_code );
+        if ( $check_code === true ) {
+            view( 'auth/auth_layout', [ 'url' => 'reset_password' ] );
+        } else {
+            setFlashMessage( 'danger', 'Url sudah tidak berfungsi, silahkan coba lagi' );
+            header( 'Location: login' );
+            exit();
+        }
+    }
+
+    static function forgotPasswordProcess() {
+
+        $post = array_map( 'trim', $_POST );
+
+        // Validasi apakah email telah diinputkan pengguna
+        if ( empty( $post[ 'email' ] ) ) {
+            setFlashMessage( 'danger', 'Email harus diisi!' );
+            header( 'Location: forgotpassword' );
+            exit();
+        }
+        // Validasi format email
+        elseif ( !filter_var( $post[ 'email' ], FILTER_VALIDATE_EMAIL ) ) {
+            setFlashMessage( 'danger', 'Format email tidak valid!' );
+            header( 'Location: forgotpassword' );
+            exit();
+        } else {
+            // Periksa apakah pengguna dengan email yang diinputkan ada
+            $user = Users::findUserByEmail( $post[ 'email' ] );
+            if ( $user ) {
+                // Generate kode baru
+                $new_code = mt_rand( 100000, 999999 );
+                $encrypted_code = crypt( $new_code, PASSWORD_DEFAULT );
+                echo $encrypted_code;
+                // Perbarui kode pengguna di database
+                Users::updateUserCode( $user[ 'id' ], $new_code );
+                // Kirim email kepada pengguna dengan kode
+                $sendEmail = sendCodeEmail( $post[ 'email' ], $encrypted_code );
+                if ( $sendEmail === true ) {
+                    setFlashMessage( 'success', 'Email untuk proses reset password telah dikirim. Periksa kotak masuk Anda.' );
+                    header( 'Location: login' );
+                    exit();
+                } else {
+                    setFlashMessage( 'danger', 'Email tidak terkirim, coba lagi' );
+                    header( 'Location: forgotpassword' );
+                    exit();
+                }
+            } else {
+                setFlashMessage( 'danger', 'Email tidak ditemukan' );
+                header( 'Location: forgotpassword' );
+                exit();
+            }
+        }
+    }
+    static function resetPasswordProcess() {
+        $post = array_map( 'trim', $_POST );
+        if ( strlen( $post[ 'password' ] ) < 8 ) {
+            setFlashMessage( 'danger', 'Password harus terdiri dari minimal 8 karakter' );
+            header( 'Location: resetpassword' );
+        } elseif ( strlen( $post[ 'password' ] ) !== strlen( $post[ 'confirm_password' ] ) ) {
+            setFlashMessage( 'danger', 'Password dan konfirmasi password harus sama' );
+            header( 'Location: resetpassword' );
+        } else {
+            $user = Users::findUserByEmail( $post[ 'email' ] );
+            $data = [
+                'email'=> $user[ 'email' ],
+                'password' => $post[ 'password' ]
+            ];
+            Users::updatePassword( $data );
+            setFlashMessage( 'success', 'Password berhasil diubah, silahkan login' );
+            header( 'Location: login' );
+            exit();
+        }
     }
 }

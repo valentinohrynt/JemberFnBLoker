@@ -40,6 +40,7 @@
     <script src="<?= urlpath('assets/js/theme.js') ?>"></script>
     <?= $customscript ?? ''; ?>
     <?= $ajaxgetscript ?? ''; ?>
+    <?= $ajaxpostscript ?? ''; ?>
     <?= $ajaxpostscript1 ?? ''; ?>
     <?= $ajaxpostscript2 ?? ''; ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -1,4 +1,9 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+include_once './lib/PHPMailer/src/Exception.php';
+include_once './lib/PHPMailer/src/PHPMailer.php';
+include_once './lib/PHPMailer/src/SMTP.php';
 
 function view( $page, $data = [] )
  {
@@ -103,33 +108,29 @@ function isCurrentPage( $page )
     return strpos( $_SERVER[ 'REQUEST_URI' ], '/'.$page ) !== false ? 'active' : '';
 }
 
-// function checkAuth() {
-//     if ( !isset( $_COOKIE[ 'token' ] ) || !isset( $_SESSION[ 'user' ] ) ) {
-//         header( 'Location: ' . BASEURL . 'login' );
-//         exit;
-//     }
-//     $token = $_COOKIE[ 'token' ];
-//     $user = Users::getUserByToken( $token );
+function sendCodeEmail( $email, $code ) {
+    $mail = new PHPMailer( true );
+    $url = urlpath( 'resetpassword?verification='.$code.'&email=' . $email );
 
-//     if ( !$user || $user[ 'username' ] !== $_SESSION[ 'user' ][ 'username' ] ) {
-//         unset( $_SESSION[ 'user' ] );
-//         setcookie( 'token', '', time() - 3600, '/' );
-//         header( 'Location: ' . BASEURL . 'login' );
-//         exit;
-//     }
-// }
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.googlemail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'jemberfnbloker@gmail.com';
+        $mail->Password   = 'ydljjrkqenrcfskw';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-// function encrypt( $variable ) {
-//     $key = $_ENV[ 'ENCRYPTION_KEY' ];
-//     $iv = $_ENV[ 'ENCRYPTION_IV' ];
-//     $encrypted = openssl_encrypt( $variable, 'aes-256-cbc', $key, 0, $iv );
-//     return base64_encode( $encrypted );
-// }
+        $mail->setFrom( 'jemberfnbloker@gmail.com', 'Jember FnB Loker' );
+        $mail->addAddress( $email );
 
-// function decrypt( $encrypted_variable ) {
-//     $key = $_ENV[ 'ENCRYPTION_KEY' ];
-//     $iv = $_ENV[ 'ENCRYPTION_IV' ];
-//     $decoded = base64_decode( $encrypted_variable );
-//     $decrypted = openssl_decrypt( $decoded, 'aes-256-cbc', $key, 0, $iv );
-//     return $decrypted;
-// }
+        $mail->isHTML( true );
+        $mail->Subject = 'Password Reset Request';
+        $mail->Body    = 'Click this link to reset your password: ' . $url;
+
+        $mail->send();
+        return true;
+    } catch ( Exception $e ) {
+        return false;
+    }
+}

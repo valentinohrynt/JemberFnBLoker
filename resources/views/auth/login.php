@@ -27,6 +27,7 @@
                </div>
                <button type="submit" class="btn btn-primary btn-block mb-4 form-control">Login</button>
              </form>
+             <p class="text-center mt-3 text-secondary"><a href="<?= urlpath('forgotpassword'); ?>">Forgot Password</a></p>
              <p class="text-center mt-3 text-secondary">If you don't have account, Please <a
                  href="<?= urlpath('register'); ?>">Register Now</a></p>
            </div>

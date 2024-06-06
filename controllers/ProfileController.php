@@ -63,7 +63,8 @@ class ProfileController
                 return view( 'profile/ubahprofile_layout', [ 'url' => 'ubahprofile', 'profile' => $profile, 'districts' => $districts ] );
             } else {
                 return view( 'home/home_layout', [ 'url' => 'home' ] );
-            }       
+            }
+
         }
     }
 
@@ -80,16 +81,24 @@ class ProfileController
             header( 'Location: ' . BASEURL . 'login' );
             exit;
         } else {
+            // Validasi apakah semua field yang diperlukan telah diisi
+            $post = array_map( 'htmlspecialchars', $_POST );
+            $requiredFields = [ 'name', 'phone', 'street', 'district_id', 'password' ];
+            foreach ( $requiredFields as $field ) {
+                if ( empty( $post[ $field ] ) ) {
+                    echo json_encode( [ 'status' => 'error', 'message' => 'Semua bidang harus diisi' ] );
+                    return;
+                }
+            }
             try {
                 $userId = $_SESSION[ 'user' ][ 'id' ];
                 $roleId = $_SESSION[ 'user' ][ 'role_id' ];
-                $post = array_map( 'htmlspecialchars', $_POST );
                 foreach ( $post as $key => $value ) {
                     $post[ $key ] = htmlspecialchars_decode( $value );
                 }
                 $oldUsername = $_SESSION[ 'user' ][ 'username' ];
                 $oldEmail = $_SESSION[ 'user' ][ 'email' ];
-    
+
                 if ( $roleId === '2' ) {
                     $profile = JobSeekers::getJobSeekerByUserId( $userId );
                     $jobSeekerId = $profile[ 'id' ];
@@ -107,7 +116,7 @@ class ProfileController
                                 return;
                             }
                         }
-    
+
                         // Cek duplikasi email
                         if ( $post[ 'email' ] !== $oldEmail ) {
                             $isEmailTaken = Users::isEmailTaken( $post[ 'email' ], $userId );
@@ -116,7 +125,7 @@ class ProfileController
                                 return;
                             }
                         }
-    
+
                         // Update data user jika ada perubahan
                         $dataUser = [
                             'id' => $userId
@@ -127,15 +136,12 @@ class ProfileController
                         if ( $post[ 'email' ] !== $oldEmail ) {
                             $dataUser[ 'email' ] = $post[ 'email' ];
                         }
-    
+
                         // Jika ada perubahan username atau email, lakukan update
                         if ( count( $dataUser ) > 1 ) {
                             $userUpdated = Users::updateUser( $dataUser );
-                            if ( !$userUpdated ) {
-                                throw new Exception( 'Gagal memperbarui profil pengguna.' );
-                            }
                         }
-    
+
                         // Update data job seeker
                         $dataJobSeeker = [
                             'id' => $jobSeekerId,
@@ -152,10 +158,8 @@ class ProfileController
                             $dataJobSeeker[ 'profile_image' ] = $_FILES[ 'image' ];
                         }
                         $jobSeekerUpdated = JobSeekers::updateJobSeeker( $dataJobSeeker );
-                        if ( !$jobSeekerUpdated ) {
-                            throw new Exception( 'Gagal memperbarui profil pencari kerja, pastikan ada perubahan data.' );
-                        }
-    
+
+                        $_SESSION[ 'user' ] = $userUpdated;
                         echo json_encode( [ 'status' => 'success', 'message' => 'Profil berhasil diubah' ] );
                     } else {
                         echo json_encode( [ 'status' => 'error', 'message' => 'Password lama tidak sesuai' ] );
@@ -163,7 +167,7 @@ class ProfileController
                     }
                 } else if ( $roleId === '3' ) {
                     $profile = JobCreators::getJobCreatorByUserId( $userId );
-                    $jobSeekerId = $profile[ 'id' ];
+                    $jobCreatorId = $profile[ 'id' ];
                     $data = [
                         'id' => $userId,
                         'password' => $post[ 'password' ],
@@ -192,18 +196,13 @@ class ProfileController
                             'username' => $post[ 'username' ],
                             'email' => $post[ 'email' ],
                         ];
-    
                         // Jika ada perubahan username atau email, lakukan update
                         if ( count( $dataUser ) > 1 ) {
                             $userUpdated = Users::updateUser( $dataUser );
-                            if ( !$userUpdated ) {
-                                throw new Exception( 'Gagal memperbarui profil pengguna.' );
-                            }
                         }
-    
-                        // Update data job seeker
+                        // Update data job Creator
                         $dataJobCreator = [
-                            'id' => $jobSeekerId,
+                            'id' => $jobCreatorId,
                             'name' => $post[ 'name' ],
                             'phone' => $post[ 'phone' ],
                             'lat' => $post[ 'lat' ],
@@ -215,10 +214,8 @@ class ProfileController
                             $dataJobCreator[ 'profile_image' ] = $_FILES[ 'image' ];
                         }
                         $jobCreatorUpdated = JobCreators::updateJobCreator( $dataJobCreator );
-                        if ( !$jobCreatorUpdated ) {
-                            throw new Exception( 'Gagal memperbarui profil pembuat kerja, pastikan ada perubahan data.' );
-                        }
-    
+
+                        $_SESSION[ 'user' ] = $userUpdated;
                         echo json_encode( [ 'status' => 'success', 'message' => 'Profil berhasil diubah' ] );
                     } else {
                         echo json_encode( [ 'status' => 'error', 'message' => 'Password lama tidak sesuai' ] );

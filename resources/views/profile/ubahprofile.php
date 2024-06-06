@@ -14,7 +14,7 @@
     <?php endif; ?>
     <div class="container pt-5 pb-5">
         <h2 class="text-center text-break text-wrap">Ubah Profile</h2>
-        <form action="<?= urlpath('profile/ubahprofile') ?>" id="editProfileForm">
+        <form id="editProfileForm">
         <div class="card pt-5 mt-5 mx-auto" style="max-width: 540px;">
             <div class="card-content px-5 pb-5">
                 <div class="card-body d-flex justify-content-center">
@@ -89,12 +89,18 @@
                     <input type="password" name="password" placeholder="Masukkan password Anda untuk mengubah profile" class="form-control">
                 </div>
             </div>
+            <?php if ($user['role_id'] == 2) : ?>
             <div class="card-footer">
-                <button type="submit" class="btn btn-success" id="saveChangesBtn">Save Changes <i
-                        class="fa-solid fa-cloud-arrow-up"></i></button>
+                <button type="button" class="btn btn-success" id="save-btn-js">Save Changes <i class="fa-solid fa-cloud-arrow-up"></i></button>
             </div>
-        </div>
+            <?php endif; ?>
+            <?php if ($user['role_id'] == 3) : ?>
+            <div class="card-footer">
+                <button type="button" class="btn btn-primary" id="save-btn-jc">Save Changes <i class="fa-solid fa-cloud-arrow-up"></i></button>
+            </div>
+            <?php endif; ?>
         </form>
+        </div>
         <div class="modal fade" id="imageUploadModal" tabindex="-1" aria-labelledby="imageUploadModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">

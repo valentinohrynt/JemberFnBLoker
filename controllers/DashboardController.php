@@ -220,95 +220,127 @@ class DashboardController
     }
 
     static function createJobVacancy() {
-        if ( !isset( $_COOKIE[ 'token' ] ) || !isset( $_SESSION[ 'user' ] ) ) {
-            header( 'Location: ' . BASEURL . 'login' );
+        // Periksa apakah pengguna telah terautentikasi
+        if (!isset($_COOKIE['token']) || !isset($_SESSION['user'])) {
+            header('Location: ' . BASEURL . 'login');
             exit;
         }
-        $token = $_COOKIE[ 'token' ];
-        $user = Users::getUserByToken( $token );
-
-        if ( !$user || $user[ 'username' ] !== $_SESSION[ 'user' ][ 'username' ] ) {
-            unset( $_SESSION[ 'user' ] );
-            setcookie( 'token', '', time() - 3600, '/' );
-            header( 'Location: ' . BASEURL . 'login' );
+        // Verifikasi token pengguna
+        $token = $_COOKIE['token'];
+        $user = Users::getUserByToken($token);
+    
+        if (!$user || $user['username'] !== $_SESSION['user']['username']) {
+            unset($_SESSION['user']);
+            setcookie('token', '', time() - 3600, '/');
+            header('Location: ' . BASEURL . 'login');
             exit;
         } else {
-            if ( $user[ 'role_id' ] == '3' ) {
-                $post = array_map( 'htmlspecialchars', $_POST );
-                foreach ( $post as $key => $value ) {
-                    $post[ $key ] = htmlspecialchars_decode( $value );
+            // Periksa apakah pengguna adalah pembuat lowongan pekerjaan
+            if ($user['role_id'] == '3') {
+                // Validasi sisi server untuk bidang yang diperlukan
+                $requiredFields = ['d', 'e', 'f', 'h', 'i']; // Bidang yang wajib diisi
+                foreach ($requiredFields as $field) {
+                    if (empty($_POST[$field])) {
+                        echo json_encode(['success' => false, 'message' => 'Semua bidang harus diisi']);
+                        exit;
+                    }
                 }
-                $userId = $_SESSION[ 'user' ][ 'id' ];
-
-                $job_creator = JobCreators::getJobCreatorByUserId( $userId );
-                $job_creatorId = $job_creator[ 'id' ];
-                $JobVacancy = JobVacancy::createJobVacancy( [
+                // Bersihkan dan proses data
+                $post = array_map('htmlspecialchars', $_POST);
+                foreach ($post as $key => $value) {
+                    $post[$key] = htmlspecialchars_decode($value);
+                }
+                // Dapatkan ID pembuat pekerjaan dari sesi pengguna
+                $userId = $_SESSION['user']['id'];
+                $job_creator = JobCreators::getJobCreatorByUserId($userId);
+                $job_creatorId = $job_creator['id'];
+                
+                // Buat lowongan pekerjaan
+                $JobVacancy = JobVacancy::createJobVacancy([
                     'job_creator_id' => $job_creatorId,
-                    'title' => $post[ 'd' ],
-                    'job_category_id' => $post[ 'e' ],
-                    'requirement' => $post[ 'f' ],
-                    'job_time' => $post[ 'h' ],
-                    'workplace' => $post[ 'i' ],
-                ] );
-
-                if ( $JobVacancy ) {
-                    echo json_encode( [ 'success' => true ] );
+                    'title' => $post['d'],
+                    'job_category_id' => $post['e'],
+                    'requirement' => $post['f'],
+                    'job_time' => $post['h'],
+                    'workplace' => $post['i'],
+                ]);
+    
+                // Berikan respons sesuai hasil pembuatan lowongan pekerjaan
+                if ($JobVacancy) {
+                    echo json_encode(['success' => true]);
                 } else {
-                    echo json_encode( [ 'success' => false, 'message' => 'Terjadi kesalahan saat membuat informasi loker. (Pastikan semua inputan sudah diisi!)' ] );
+                    echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan saat membuat informasi loker. (Pastikan semua inputan sudah diisi!)']);
                 }
-
             } else {
-                header( 'Location: ' .BASEURL. 'dashboard' );
+                // Jika pengguna bukan pembuat lowongan pekerjaan, alihkan ke dashboard
+                header('Location: ' .BASEURL. 'dashboard');
                 exit;
             }
         }
     }
+    
 
     static function updateJobVacancy()
- {
-        if ( !isset( $_COOKIE[ 'token' ] ) || !isset( $_SESSION[ 'user' ] ) ) {
-            header( 'Location: ' . BASEURL . 'login' );
+    {
+        // Periksa apakah pengguna telah terautentikasi
+        if (!isset($_COOKIE['token']) || !isset($_SESSION['user'])) {
+            header('Location: ' . BASEURL . 'login');
             exit;
         }
-        $token = $_COOKIE[ 'token' ];
-        $user = Users::getUserByToken( $token );
-
-        if ( !$user || $user[ 'username' ] !== $_SESSION[ 'user' ][ 'username' ] ) {
-            unset( $_SESSION[ 'user' ] );
-            setcookie( 'token', '', time() - 3600, '/' );
-            header( 'Location: ' . BASEURL . 'login' );
+        
+        // Verifikasi token pengguna
+        $token = $_COOKIE['token'];
+        $user = Users::getUserByToken($token);
+    
+        if (!$user || $user['username'] !== $_SESSION['user']['username']) {
+            unset($_SESSION['user']);
+            setcookie('token', '', time() - 3600, '/');
+            header('Location: ' . BASEURL . 'login');
             exit;
         } else {
-            if ( $user [ 'role_id' ] == '3' || $user [ 'role_id' ] == '1' ) {
-                $post = array_map( 'htmlspecialchars', $_POST );
-                foreach ( $post as $key => $value ) {
-                    $post[ $key ] = htmlspecialchars_decode( $value );
+            // Periksa apakah pengguna adalah pembuat lowongan pekerjaan atau admin
+            if ($user['role_id'] == '3' || $user['role_id'] == '1') {
+                // Validasi atribut yang diperlukan
+                $requiredFields = ['d', 'e', 'f', 'h', 'i']; // Bidang yang wajib diisi
+                foreach ($requiredFields as $field) {
+                    if (empty($_POST[$field])) {
+                        echo json_encode(['success' => false, 'message' => 'Semua bidang harus diisi']);
+                        exit;
+                    }
+                } 
+                // Bersihkan dan proses data
+                $post = array_map('htmlspecialchars', $_POST);
+                foreach ($post as $key => $value) {
+                    $post[$key] = htmlspecialchars_decode($value);
                 }
-                $id = $post[ 'id' ];
+                // Ambil ID lowongan pekerjaan dari inputan
+                $id = $post['id'];
+                // Siapkn data yang akan diperbarui
                 $data = [
-                    'title' => $post[ 'd' ],
-                    'job_category_id' => $post[ 'e' ],
-                    'requirement' => $post[ 'f' ],
-                    'job_time' => $post[ 'h' ],
-                    'workplace' => $post[ 'i' ],
+                    'title' => $post['d'],
+                    'job_category_id' => $post['e'],
+                    'requirement' => $post['f'],
+                    'job_time' => $post['h'],
+                    'workplace' => $post['i'],
                 ];
-                $result = JobVacancy::updateJobVacancy( $id, $data );
-
-                if ( $result ) {
-                    echo json_encode( [ 'success' => true ] );
+                // Perbarui lowongan pekerjaan
+                $result = JobVacancy::updateJobVacancy($id, $data);
+                // Berikan respons sesuai hasil pembaruan data
+                if ($result) {
+                    echo json_encode(['success' => true]);
                     exit;
                 } else {
-                    echo json_encode( [ 'success' => false, 'message' => 'Failed to update data' ] );
+                    echo json_encode(['success' => false, 'message' => 'Gagal memperbarui data']);
                     exit;
                 }
             } else {
-                header( 'Location: home' );
+                // Jika pengguna bukan pembuat lowongan pekerjaan atau admin, alihkan ke halaman beranda
+                header('Location: ' . BASEURL . 'home');
                 exit;
             }
         }
-
     }
-
+    
     static function updateStatus()
  {
         if ( !isset( $_COOKIE[ 'token' ] ) || !isset( $_SESSION[ 'user' ] ) ) {
@@ -762,5 +794,4 @@ class DashboardController
             }
         }
     }
-
 }

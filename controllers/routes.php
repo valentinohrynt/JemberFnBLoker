@@ -7,6 +7,10 @@ Router::url('register', 'get', 'AuthController::register');
 Router::url('register/JobSeeker', 'get', 'AuthController::registerJobSeekers');
 Router::url('register/JobCreator', 'get', 'AuthController::registerJobCreators');
 Router::url('register', 'post', 'AuthController::newRegister');
+Router::url('forgotpassword', 'get', 'AuthController::forgotPassword');
+Router::url('forgotpassword', 'post', 'AuthController::forgotPasswordProcess');
+Router::url('resetpassword', 'get', 'AuthController::resetPassword');
+Router::url('resetpassword', 'post', 'AuthController::resetPasswordProcess');
 Router::url('logout', 'get', 'AuthController::logout');
 
 // home

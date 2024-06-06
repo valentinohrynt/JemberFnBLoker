@@ -77,7 +77,7 @@ class Users
         }
     }
 
-    public static function findUserByUsernameOrEmail( $username, $email )
+    static function findUserByUsernameOrEmail( $username, $email )
  {
         global $conn;
 
@@ -92,6 +92,16 @@ class Users
         } else {
             return null;
         }
+    }
+
+    static function findUserByEmail( $email ) {
+        global $conn;
+        $sql = 'SELECT * FROM users WHERE email = ?';
+        $stmt = $conn->prepare( $sql );
+        $stmt->bind_param( 's', $email );
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
     static function getPassword( $username )
@@ -184,7 +194,9 @@ class Users
         $result = $stmt->execute();
         $stmt->close();
 
-        return $result;
+        $id = $dataUser[ 'id' ];
+        $updatedData = $conn ->query( "SELECT * FROM users WHERE id ='$id'" );
+        return $updatedData->fetch_assoc();
     }
 
     static function checkPassword( $data = [] ) {
@@ -202,7 +214,6 @@ class Users
                 return false;
             }
         }
-
     }
 
     static function getUserById( $id ) {
@@ -215,6 +226,7 @@ class Users
         $stmt->close();
         return $result->fetch_assoc();
     }
+
     static function getUsersData() {
         global $conn;
         $sql = 'SELECT role_id, COUNT(*) AS count FROM users WHERE role_id = 2 OR role_id = 3 GROUP BY role_id';
@@ -232,15 +244,52 @@ class Users
         return [ 'labels' => $labels, 'data' => $data ];
     }
 
-    static function disableUser($id) {
+    static function disableUser( $id ) {
         global $conn;
         $status = 'inactive';
         $sql = 'UPDATE users SET status = ? WHERE id = ?';
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param('si', $status, $id);
+        $stmt = $conn->prepare( $sql );
+        $stmt->bind_param( 'si', $status, $id );
         $success = $stmt->execute();
         $stmt->close();
-        return true; 
+        return true;
     }
 
+    static function updateUserCode( $id, $code ) {
+        global $conn;
+        $sql = 'UPDATE users SET code = ? WHERE id = ?';
+        $stmt = $conn->prepare( $sql );
+        $stmt->bind_param( 'si', $code, $id );
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+
+    static function checkVerificationCode( $email, $code ) {
+        global $conn;
+        $result = $conn->query( "SELECT * FROM users WHERE email = '$email'" );
+        if ( $result->num_rows > 0 ) {
+            $row = $result->fetch_assoc();
+            $stored_code = $row['code'];
+            if ( password_verify( $stored_code, $code ) ) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    static function updatePassword( $data ) {
+        global $conn;
+        $password = $data['password'];
+        $hashedPassword = password_hash( $password, PASSWORD_DEFAULT );
+        $sql = 'UPDATE users SET password = ? WHERE email = ?';
+        $stmt = $conn->prepare( $sql );
+        $stmt->bind_param( 'ss', $hashedPassword, $data[ 'email' ] );
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
 }
