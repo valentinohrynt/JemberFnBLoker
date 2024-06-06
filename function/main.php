@@ -114,14 +114,14 @@ function sendCodeEmail( $email, $code ) {
 
     try {
         $mail->isSMTP();
-        $mail->Host       = 'smtp.googlemail.com';
+        $mail->Host       = $_ENV[ 'SMTP_HOST' ];
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'jemberfnbloker@gmail.com';
-        $mail->Password   = 'ydljjrkqenrcfskw';
+        $mail->Username   = $_ENV[ 'SMTP_USERNAME' ];
+        $mail->Password   = $_ENV[ 'SMTP_PASSWORD' ];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = $_ENV[ 'SMTP_PORT' ];
 
-        $mail->setFrom( 'jemberfnbloker@gmail.com', 'Jember FnB Loker' );
+        $mail->setFrom( $_ENV[ 'SMTP_USERNAME' ], 'Jember FnB Loker' );
         $mail->addAddress( $email );
 
         $mail->isHTML( true );
