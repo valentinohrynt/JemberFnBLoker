@@ -44,14 +44,21 @@ if (isset($_SESSION['user'])) {
                         <a class="nav-link <?= isCurrentPage('riwayatlamaran') ?>" href="<?= urlpath('home/riwayatlamaran') ?>">Riwayat Lamaran</a>
                     </li>
                 <?php endif; ?>
-                <?php if (isset($user)) : ?>
+                <?php if (isset($user) && $user['role_id'] === '1') : ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= urlpath('dashboard') ?>">Dashboard</a>
+                    </li>
+                <?php endif; ?>
+                <?php if (isset($user) && $user['role_id'] !== '1') : ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= urlpath('profile') ?>">Profil</a>
                     </li>
+                <?php endif; ?>
+                <?php if (isset($user)) : ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= urlpath('logout') ?>">Logout</a>
                     </li>
-                <?php else : ?>
+                <?php else : ?> 
                     <li class="nav-item">
                         <a class="nav-link" href="<?= urlpath('login') ?>">Login</a>
                     </li>

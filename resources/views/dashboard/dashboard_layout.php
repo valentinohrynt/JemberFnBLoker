@@ -315,7 +315,7 @@ if (isset($url)) {
                                 var newCell = $('<td>').text(item[column]);
                                 newRow.append(newCell);
                             });
-                            var editButton = $('<button>').addClass('btn btn-primary btn-sm edit-button').text('Edit');
+                            var editButton = $('<button>').addClass('btn btn-warning btn-sm edit-button text-black').append('<i class="fa fa-pencil"></i>');
                             editButton.on('click', function() {
                                 var row = $(this).closest('tr');
                                 var jobId = row.find('td:first').text();
@@ -392,7 +392,7 @@ if (isset($url)) {
                                 handleClearButtonClick();
                             });
                         }
-                        var nonaktifkanButton = $('<button>').addClass('btn btn-danger btn-sm nonaktifkan-button').text('Nonaktifkan');
+                        var nonaktifkanButton = $('<button>').addClass('btn btn-danger btn-sm nonaktifkan-button').append('<i class="fa fa-ban"></i>');
                         nonaktifkanButton.on('click', function() {
                             showOverlay()
                             var row = $(this).closest('tr');

@@ -3,6 +3,19 @@ body {
   font-family: Poppins;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 5px;
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: white;
+}
+
 .dark-mode {
   background-color: hsl(208, 41%, 15%);
   color: #fff;
