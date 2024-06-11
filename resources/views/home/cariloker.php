@@ -22,7 +22,7 @@
                     <label for="categoryFilter" class="form-label">Filter berdasarkan posisi:</label>
                     <select id="categoryFilter" class="form-select">
                         <option value="">Semua Posisi</option>
-                        <option value="bartender">Bartender</option>
+                        <option value="barista">Barista</option>
                         <option value="cook helper">Cook Helper</option>
                         <option value="juru masak">Juru Masak</option>
                         <option value="kasir">Kasir</option>
