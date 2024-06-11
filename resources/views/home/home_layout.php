@@ -44,7 +44,7 @@ if (isset($_SESSION['user'])) {
                         <a class="nav-link <?= isCurrentPage('riwayatlamaran') ?>" href="<?= urlpath('home/riwayatlamaran') ?>">Riwayat Lamaran</a>
                     </li>
                 <?php endif; ?>
-                <?php if (isset($user) && $user['role_id'] === '1') : ?>
+                <?php if (isset($user) && $user['role_id'] === '1' || isset($user) && $user['role_id'] === '3') : ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= urlpath('dashboard') ?>">Dashboard</a>
                     </li>
