@@ -19,7 +19,8 @@ class JobApplications
     static function updateStatusJobApplication( $data ) {
         global $conn;
     }
-    static function getJobApplicationsByJobSeekerId( $job_seeker_id ) { //fungsi ini hanya ngambil yang active saja
+    static function getJobApplicationsByJobSeekerId( $job_seeker_id ) {
+        //fungsi ini hanya ngambil yang active saja
         global $conn;
         $sql = 'SELECT ja.* FROM job_applications ja
                 INNER JOIN job_vacancy jv ON ja.job_vacancy_id = jv.id
@@ -70,7 +71,7 @@ class JobApplications
     }
     static function getConfirmedJobApplicationsByJobVacancyId( $job_vacancy_id ) {
         global $conn;
-        $sql = 'SELECT * FROM job_applications WHERE job_vacancy_id = ? AND status = "accepted" OR status = "rejected" ';
+        $sql = 'SELECT * FROM job_applications WHERE job_vacancy_id = ? AND (status = "accepted" OR status = "rejected")';
         $stmt = $conn->prepare( $sql );
         $stmt->bind_param( 'i', $job_vacancy_id );
         $stmt->execute();

@@ -95,11 +95,11 @@
                                 <tbody>
                                     <?php foreach ($jobSeeker as $l): ?>
                                     <tr class="text-truncate" onclick="location.href='<?= urlpath('dashboard/pengguna/jobseeker/detailjobseeker?id='.$l['id']) ?>'">
-                                        <td><?= $l['id'] ?></td>
-                                        <td ><?= $l['name'] ?></td>
-                                        <td ><?= $l['phone'] ?></td>
-                                        <td ><?= $l['street'] ?>, <?= $l['district']['name'] ?></td>
-                                        <td><?= $l['created_at']?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['id'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['phone'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['street'] ?>, <?= $l['district']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['created_at']?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -125,17 +125,17 @@
                                         <th scope="col">Nama</th>
                                         <th scope="col">Telepon</th>
                                         <th scope="col">Alamat</th>
-                                        <th scope="col">Tanggal Dinonaktifkan</th>
+                                        <th scope="col">Tanggal Nonaktif</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($jobSeekerInactive as $l): ?>
                                     <tr  class="text-truncate">
-                                        <td><?= $l['id'] ?></td>
-                                        <td ><?= $l['name'] ?></td>
-                                        <td ><?= $l['phone'] ?></td>
-                                        <td ><?= $l['street'] ?>, <?= $l['district']['name'] ?></td>
-                                        <td><?= $l['created_at']?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['id'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['phone'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['street'] ?>, <?= $l['district']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['created_at']?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>

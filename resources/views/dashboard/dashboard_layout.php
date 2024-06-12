@@ -252,7 +252,7 @@ if (isset($url)) {
                             var columnsToShow = ['id', 'title', 'created_at'];
                         }
                         $.each(columnsToShow, function(_, column) {
-                            var newCell = $('<td>').text(item[column]);
+                            var newCell = $('<td class="text-truncate" style="max-width: 5rem;">').text(item[column]);
                             newRow.append(newCell);
                         });
                         $('#dashboardTableBody').append(newRow);
@@ -275,13 +275,13 @@ if (isset($url)) {
                         if (data.user.role_id == 1) {
                             var columnsToShow = ['id', 'title', 'jc_name', 'created_at'];
                             $.each(columnsToShow, function(_, column) {
-                                var newCell = $('<td>').text(item[column]);
+                                var newCell = $('<td class="text-truncate" style="max-width: 5rem;">').text(item[column]);
                                 newRow.append(newCell);
                             })
                         } else if (data.user.role_id == 3) {
                             var columnsToShow = ['id', 'title', 'created_at'];
                             $.each(columnsToShow, function(_, column) {
-                                var newCell = $('<td>').text(item[column]);
+                                var newCell = $('<td class="text-truncate" style="max-width: 5rem;">').text(item[column]);
                                 newRow.append(newCell);
                             });
                         }
@@ -305,14 +305,14 @@ if (isset($url)) {
                         if (data.user.role_id == 1) {
                             var columnsToShow = ['id', 'title', 'jc_name', 'created_at'];
                             $.each(columnsToShow, function(_, column) {
-                                var newCell = $('<td>').text(item[column]);
+                                var newCell = $('<td class="text-truncate" style="max-width: 5rem;">').text(item[column]);
                                 newRow.append(newCell);
                             });
 
                         } else if (data.user.role_id == 3) {
                             var columnsToShow = ['id', 'title', 'created_at'];
                             $.each(columnsToShow, function(_, column) {
-                                var newCell = $('<td>').text(item[column]);
+                                var newCell = $('<td class="text-truncate" style="max-width: 5rem;">').text(item[column]);
                                 newRow.append(newCell);
                             });
                             var editButton = $('<button>').addClass('btn btn-warning btn-sm edit-button text-black').append('<i class="fa fa-pencil"></i>');

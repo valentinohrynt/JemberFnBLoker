@@ -102,9 +102,9 @@
                                 <tbody>
                                     <?php foreach ($loker as $l): ?>
                                     <tr  class="text-truncate">
-                                        <td><?= $l['id'] ?></td>
-                                        <td ><?= $l['title'] ?></td>
-                                        <td><?= $l['application_count']?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['id'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['title'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['application_count']?></td>
                                         <td>
                                             <a href="<?= urlpath('dashboard/lamaran/daftarlamaran?id=' . $l['id']) ?>"
                                                 class="btn btn-info text-white"><i class="fas fa-eye"></i></a>

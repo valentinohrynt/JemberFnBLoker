@@ -93,12 +93,12 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($lamaran as $l): ?>
-                                    <tr  class="text-truncate">
-                                        <td><?= $l['id'] ?></td>
-                                        <td ><?= $l['job_seeker']['name'] ?></td>
-                                        <td ><?= $l['job_seeker']['phone'] ?></td>
-                                        <td ><?= $l['job_seeker']['street'] ?>, <?= $l['job_seeker']['district']['name'] ?></td>
-                                        <td><?= $l['created_at']?></td>
+                                    <tr class="text-truncate">
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['id'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['phone'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['street'] ?>, <?= $l['job_seeker']['district']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['created_at']?></td>
                                         <td>
                                             <a href="<?= urlpath('dashboard/lamaran/daftarlamaran/detaillamaran?id='. $l['id']) ?>"
                                                 class="btn btn-info text-white"><i class="fas fa-eye"></i></a>
@@ -135,11 +135,11 @@
                                 <tbody>
                                     <?php foreach ($lamaranConfirmed as $l): ?>
                                     <tr  class="text-truncate">
-                                        <td><?= $l['id'] ?></td>
-                                        <td ><?= $l['job_seeker']['name'] ?></td>
-                                        <td ><?= $l['job_seeker']['phone'] ?></td>
-                                        <td ><?= $l['job_seeker']['street'] ?>, <?= $l['job_seeker']['district']['name'] ?></td>
-                                        <td><?= $l['created_at']?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['id'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['phone'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['job_seeker']['street'] ?>, <?= $l['job_seeker']['district']['name'] ?></td>
+                                        <td class="text-truncate" style="max-width: 5rem;"><?= $l['created_at']?></td>
                                         <td>
                                             <a href="<?= urlpath('dashboard/lamaran/daftarlamaran/detaillamaran?id='. $l['id']) ?>"
                                                 class="btn btn-info text-white"><i class="fas fa-eye"></i></a>
