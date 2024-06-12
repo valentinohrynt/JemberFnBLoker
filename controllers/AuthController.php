@@ -51,7 +51,7 @@ class AuthController
                     if ( $user[ 'role_id' ] == '1' || $user[ 'role_id' ] == '2' || $user[ 'role_id' ] == '3' ) {
                         $_SESSION[ 'user' ] = $user;
                         setcookie( 'token', $user[ 'token' ], strtotime( $user[ 'token_expires_at' ] ), '/', '', false, true );
-                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang!' );
+                        setFlashMessage( 'success', 'Login Berhasil, Selamat Datang '.$_SESSION[ 'user' ][ 'username' ].'!' );
                         if ( $user[ 'role_id' ] == '1' || $user[ 'role_id' ] == '3' ) {
                             header( 'Location: dashboard' );
                         } elseif ( $user[ 'role_id' ] == '2' ) {
