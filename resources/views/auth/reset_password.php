@@ -29,6 +29,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary btn-block mb-4 form-control">Ubah Password</button>
                         </form>
+                        <p class="text-center mt-3 text-secondary">Back to <a href="<?= urlpath('login'); ?>">Login</a></p>
                     </div>
                 </div>
             </div>
